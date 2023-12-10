@@ -23,6 +23,7 @@ def load_files(drive_link: str, zip_name: str):
     dataFolder = download_from_drive_unzip(drive_link, zip_name)
     for file in os.listdir(dataFolder):
         resample_convert(f"{dataFolder}\\{file}")
+        os.remove(f"{dataFolder}\\{file}")
     pass
 
 
@@ -73,4 +74,4 @@ def normalize_convert_to_wav(file: str):
     """
     rawsound = AudioSegment.from_file(file, file[-3:])  
     normalizedsound = effects.normalize(rawsound)  
-    normalizedsound.export(f"{file[:-4]}norm.wav", format="wav")
+    normalizedsound.export(f"{file[:-4]}converted.wav", format="wav")
