@@ -2,17 +2,15 @@ import os
 import zipfile
 from gdown import download_folder
 from pydub import AudioSegment, effects
-import mutagen
+import soundfile as sf
 
 #TODO:
 # for each file:
     # check sampling
         # resample !!!!!
-    # check length (what for? dunno, maybe useful)
-    # save as converted file or load converted file as np.array
 
 
-def load_files(drive_link: str, zip_name: str):
+def convert_files(drive_link: str, zip_name: str):
     """
     Function downolads, unzips, resamples, normalizes and converts to .wav database from google drive 
 
@@ -22,7 +20,7 @@ def load_files(drive_link: str, zip_name: str):
     """
     dataFolder = download_from_drive_unzip(drive_link, zip_name)
     for file in os.listdir(dataFolder):
-        resample_convert(f"{dataFolder}\\{file}")
+        normalize_convert_to_wav(f"{dataFolder}\\{file}")
         os.remove(f"{dataFolder}\\{file}")
     pass
 
@@ -59,10 +57,6 @@ def resample_convert(file: str):
         # ffmpeg does not work on my files, works on previous files from TM
     # check sample rate
         # resample
-    audio_info = mutagen.File(file).info
-    if not audio_info.sample_rate == 16000:
-        print(audio_info.sample_rate)
-    normalize_convert_to_wav(file)
 
 
 def normalize_convert_to_wav(file: str):
@@ -75,3 +69,17 @@ def normalize_convert_to_wav(file: str):
     rawsound = AudioSegment.from_file(file, file[-3:])  
     normalizedsound = effects.normalize(rawsound)  
     normalizedsound.export(f"{file[:-4]}converted.flac", format="flac")
+    
+    
+def load_file_to_array(path: str):
+    """
+    Fucntion loads values of audio file
+
+    Args:
+        path (str): A path to file 
+
+    Returns:
+        signal (np.array): Values of signal
+        fs (int): Signal sample rate
+    """
+    return sf.read(path)
