@@ -4,6 +4,7 @@ A class that allows to download audio files from the API
 
 import requests
 import wget
+import os
 from response_model import Response
 import pandas as pd
 
@@ -25,24 +26,31 @@ class Downloader():
         
     def download_audio_from_response(self, response: Response, path: str = None):
         for recording in response.recordings:
-            wget.download(recording.file, f'{path}{recording.file_name}')
+            try:
+                wget.download(recording.file, f'{path}{recording.file_name}')
+            except:
+                continue
 
 
 def main():
     base_url = "https://xeno-canto.org"
     endpoint = "/api/2/recordings?"
     birds_df = pd.read_csv("src/Resources/birds_list.csv", header=None)
-    path = ""
-
-    # TODO:
-    # Path requires some attention to make it better
+    path = "D:/Music/Birds sounds"
     
     downloader = Downloader(base_url, endpoint)
     for row in birds_df.itertuples():
-        response = Response.from_dict(downloader.download_json(row[2], row[3]))
-        downloader.download_audio_from_response(response, path= path + f"/{row[1]}/")
+        final_path = path + f"/{row[1]}/"
+        if not os.path.exists(final_path):
+            os.mkdir(final_path)
+        else:
+            continue
 
-    #print(response)
+        try:
+            response = Response.from_dict(downloader.download_json(row[2], row[3]))
+            downloader.download_audio_from_response(response, path=final_path)
+        except:
+            continue
 
 
 if __name__ == '__main__':
