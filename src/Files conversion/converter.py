@@ -81,5 +81,7 @@ def load_file_to_array(path: str):
     Returns:
         signal (np.array): Values of signal
         fs (int): Signal sample rate
+        path (str): Path to loaded file
     """
-    return sf.read(path)
+    signal, fs = sf.read(path)
+    return signal, fs, path
