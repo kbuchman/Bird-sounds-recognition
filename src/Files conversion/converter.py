@@ -10,6 +10,13 @@ import soundfile as sf
         # resample !!!!!
 
 
+def convert_files_in_folder(folder_path: str):
+    for folder in os.listdir(folder_path):
+        for file in os.listdir(f"{folder_path}\\{folder}"):
+            normalize_convert_to_wav(f"{folder_path}\\{folder}\\{file}")
+            os.remove(f"{folder_path}\\{folder}\\{file}")
+
+
 def convert_files(drive_link: str, zip_name: str):
     """
     Function downolads, unzips, resamples, normalizes and converts to .wav database from google drive 
@@ -66,9 +73,9 @@ def normalize_convert_to_wav(file: str):
     Args:
         file (str): audio file
     """
-    rawsound = AudioSegment.from_file(file, file[-3:])  
+    rawsound = AudioSegment.from_file(file, file[-4:])  
     normalizedsound = effects.normalize(rawsound)  
-    normalizedsound.export(f"{file[:-4]}converted.flac", format="flac")
+    normalizedsound.export(f"{file[:-5]}converted.wav", format="wav")
     
     
 def load_file_to_array(path: str):
