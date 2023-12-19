@@ -29,6 +29,8 @@ def main():
     frame_list = framing(signal, fs, win_len, win_hop)
     energy = signal_energy(frame_list)
     std = np.stdev(energy)
+    mean = np.mean(energy)
+    return mean, std
 
 if __name__ == "__main__":
     main()
