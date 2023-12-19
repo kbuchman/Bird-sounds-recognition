@@ -30,7 +30,7 @@ def main():
     energy = signal_energy(frame_list)
     std = np.stdev(energy)
     mean = np.mean(energy)
-    return mean, std
+    return mean * std
 
 if __name__ == "__main__":
     main()

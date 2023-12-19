@@ -1,4 +1,3 @@
-from converter import convert_files
+from converter import convert_files_in_folder
 
-
-convert_files("https://drive.google.com/drive/folders/1eIFeUXIkQcuey3wYHmdixPA7ywrgeAN3?usp=drive_link", "\\PythonRoboczy.zip")
+convert_files_in_folder("D:\Mój folder\Python\BirdVoiceRecognition\\Birds sounds - small")
