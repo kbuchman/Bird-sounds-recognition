@@ -1,7 +1,7 @@
 import os
 import zipfile
 from gdown import download_folder
-from pydub import AudioSegment, effects
+import librosa
 import soundfile as sf
 
 #TODO:
@@ -53,27 +53,35 @@ def resample_convert(file: str):
     Args:
         file (str): audio file
     """
-    #TODO
-        # ffmpeg does not work on my files, works on previous files from TM
+    # TODO
     # check sample rate
         # resample
 
 
-def normalize_convert_to_wav(file: str):
+def normalize_convert_to_wav(file: str, source_folder: str, destination_folder: str):
     """
-    Function normalizes audio file and exports it to .wav format
+    Function normalizes audio file and exports it to .flac format
 
     Args:
-        file (str): audio file
+        file: audio file name
+        source_folder: parent folder for the file
+        destination_folder: new location for the file
     """
-    rawsound = AudioSegment.from_file(file, file[-3:])  
-    normalizedsound = effects.normalize(rawsound)  
-    normalizedsound.export(f"{file[:-4]}converted.flac", format="flac")
+    try:
+        audio, sr = librosa.load(os.path.join(source_folder, file))  
+        normalized_audio = librosa.util.normalize(audio)
+
+        os.makedirs(destination_folder, exist_ok=True)
+        sf.write(os.path.join(destination_folder, f"{file[:-4]}.flac"), normalized_audio, sr, format="flac")
+
+        print(f"File {file[:-4]} saved into {destination_folder}")
+    except:
+        print(f"\033[91mFile {file[:-4]} skipped\033[37m")
     
     
 def load_file_to_array(path: str):
     """
-    Fucntion loads values of audio file
+    Function loads values of audio file
 
     Args:
         path (str): A path to file 
@@ -83,3 +91,21 @@ def load_file_to_array(path: str):
         fs (int): Signal sample rate
     """
     return sf.read(path)
+
+
+def main():
+    source_folder = "D:\Music\Birds sounds"
+    destination_folder = "D:\Music\Birds sounds - normalized database"
+    os.makedirs(destination_folder, exist_ok=True)
+
+    for folder in os.listdir(source_folder):
+        folder_path = os.path.join(source_folder, folder)
+
+        if os.path.isdir(folder_path):
+            _ = [normalize_convert_to_wav(f, folder_path, os.path.join(destination_folder, folder)) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+            
+        
+
+
+if __name__ == '__main__':
+    main()
