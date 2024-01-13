@@ -1,7 +1,8 @@
 import soundfile as sf
+from librosa import load
 
 def cut_audio(input_file_path: str, output_file_path: str, start_time: float, end_time: float):
-    audio_data, sample_rate = sf.read(input_file_path)
+    audio_data, sample_rate = load(input_file_path)
 
     start_sample = int(start_time * sample_rate)
     end_sample = int(end_time * sample_rate)
